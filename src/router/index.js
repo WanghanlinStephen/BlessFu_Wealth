@@ -28,6 +28,7 @@ const routes = [
       { path: 'ac', name: 'Ac', meta: { name: '账户信息' }, component: () => import('../views/manager/Ac') },
       { path: 'category', name: 'Category', meta: { name: '账户信息' }, component: () => import('../views/manager/Category') },
       { path: 'bill', name: 'Bill', meta: { name: '我的账单' }, component: () => import('../views/manager/Bill') },
+      { path: 'time', name: 'Time', meta: { name: '时间贡献' }, component: () => import('../views/manager/Time') },
       { path: 'notebook', name: 'Notebook', meta: { name: '念经打卡' }, component: () => import('../views/manager/Notebook') },
       // { path: 'plan', name: 'Plan', meta: { name: '存钱计划' }, component: () => import('../views/manager/Plan') },
       { path: 'planDetail', name: 'PlanDetail', meta: { name: '存钱计划明细' }, component: () => import('../views/manager/PlanDetail') },

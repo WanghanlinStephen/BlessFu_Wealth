@@ -3,8 +3,10 @@
     <div class="search">
       <el-input placeholder="请选择账单类型查询" style="width: 200px; margin-right: 10px" v-model="type"></el-input>
       <el-input placeholder="请选择账单分类查询" style="width: 200px; margin-right: 10px" v-model="category"></el-input>
-      <el-date-picker value-format="yyyy-MM-dd" format="yyyy-MM-dd" v-model="start" placeholder="请选择开始日期查询" style="width: 200px; margin-right: 10px"></el-date-picker>
-      <el-date-picker value-format="yyyy-MM-dd" format="yyyy-MM-dd" v-model="end" placeholder="请选择结束日期查询" style="width: 200px;"></el-date-picker>
+      <el-date-picker value-format="yyyy-MM-dd" format="yyyy-MM-dd" v-model="start" placeholder="请选择开始日期查询"
+        style="width: 200px; margin-right: 10px"></el-date-picker>
+      <el-date-picker value-format="yyyy-MM-dd" format="yyyy-MM-dd" v-model="end" placeholder="请选择结束日期查询"
+        style="width: 200px;"></el-date-picker>
       <el-button type="info" plain style="margin-left: 10px" @click="load(1)">查询</el-button>
       <el-button type="warning" plain style="margin-left: 10px" @click="reset">重置</el-button>
     </div>
@@ -12,7 +14,7 @@
     <div class="operation">
       <el-button type="primary" plain @click="handleAdd">记一笔</el-button>
       <el-button type="danger" plain @click="delBatch">批量删除</el-button>
-      <el-button type="info" plain @click="exportBatch">批量导出</el-button>
+      <el-button type="info" plain @click="exportBatch">全部导出</el-button>
     </div>
 
     <div class="table">
@@ -35,14 +37,8 @@
       </el-table>
 
       <div class="pagination">
-        <el-pagination
-            background
-            @current-change="handleCurrentChange"
-            :current-page="pageNum"
-            :page-sizes="[5, 10, 20]"
-            :page-size="pageSize"
-            layout="total, prev, pager, next"
-            :total="total">
+        <el-pagination background @current-change="handleCurrentChange" :current-page="pageNum"
+          :page-sizes="[5, 10, 20]" :page-size="pageSize" layout="total, prev, pager, next" :total="total">
         </el-pagination>
       </div>
     </div>
@@ -50,6 +46,15 @@
 
     <el-dialog title="信息" :visible.sync="fromVisible" width="40%" :close-on-click-modal="false" destroy-on-close>
       <el-form :model="form" label-width="100px" style="padding-right: 50px" :rules="rules" ref="formRef">
+        <el-form-item label="选择用户" prop="userName" v-if="user.role === 'ADMIN'">
+          <el-autocomplete v-model="form.userName" :fetch-suggestions="querySearch" placeholder="请输入用户姓名"
+            style="width: 100%" @select="handleSelect">
+            <template slot-scope="{ item }">
+              <div class="name-item">{{ item.value }}</div>
+            </template>
+          </el-autocomplete>
+        </el-form-item>
+
         <el-form-item label="账单类型" prop="type">
           <el-select style="width: 100%" v-model="form.type" @change="getCategoryList" :disabled="form.id">
             <el-option value="支出"></el-option>
@@ -70,7 +75,11 @@
           </el-select>
         </el-form-item>
         <el-form-item label="金额" prop="money">
-          <el-input v-model="form.money" placeholder="金额" :disabled="form.id" :min="1" ></el-input>
+          <el-input v-model="form.money" placeholder="金额" :disabled="form.id" :min="1"></el-input>
+        </el-form-item>
+        <el-form-item label="自定义日期" prop="time">
+          <el-date-picker v-model="form.time" type="datetime" placeholder="选择日期"
+            style="width: 100%"></el-date-picker>
         </el-form-item>
         <el-form-item label="备注" prop="comment">
           <el-input type="textarea" v-model="form.comment" placeholder="备注"></el-input>
@@ -82,13 +91,14 @@
       </div>
     </el-dialog>
 
-    
+
 
 
   </div>
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: "Bill",
   data() {
@@ -105,17 +115,20 @@ export default {
       form: {},
       user: JSON.parse(localStorage.getItem('xm-user') || '{}'),
       rules: {
+        userName: [
+          { required: true, message: '请选择用户类型', trigger: 'blur' }
+        ],
         type: [
-          {required: true, message: '请选择账单类型', trigger: 'blur'},
+          { required: true, message: '请选择账单类型', trigger: 'blur' },
         ],
         category: [
-          {required: true, message: '请选择账单分类', trigger: 'blur'},
+          { required: true, message: '请选择账单分类', trigger: 'blur' },
         ],
         payType: [
-          {required: true, message: '请选择账户类型', trigger: 'blur'},
+          { required: true, message: '请选择账户类型', trigger: 'blur' },
         ],
         money: [
-          {required: true, message: '请输入金额', trigger: 'blur'},
+          { required: true, message: '请输入金额', trigger: 'blur' },
           { pattern: /^(([1-9]{1}\d*)|([0]{1}))(\.(\d){1,2})?$/, message: '金额只能输入数字，最多2位小数', trigger: 'blur' }
         ]
       },
@@ -127,6 +140,37 @@ export default {
     this.load(1)
   },
   methods: {
+    handleSelect(item) {
+      this.form.userId = item.id;
+      this.form.userName = item.value;
+      this.$refs.formRef.validateField('userName');
+    },
+    querySearch(queryString, cb) {
+      // 使用 this.$request 发送请求到后端API
+      this.$request({
+        url: '/user/selectAll',
+        method: 'GET'
+      }).then(response => {
+        // 检查API调用是否成功
+        if (response.code === '200') {
+          // 数据处理：提取并映射所需的数据字段
+          const users = response.data.map(user => {
+            return { id: user.id, value: user.username };
+          });
+          // 根据查询字符串过滤用户信息
+          const results = queryString ? users.filter(user => user.value.toLowerCase().includes(queryString.toLowerCase())) : users;
+          cb(results);  // 调用回调函数返回建议列表的数据
+        } else {
+          // 如果响应码不是200，处理错误
+          console.error('Failed to fetch users:', response.msg);
+          cb([]);
+        }
+      }).catch(error => {
+        // 请求失败的错误处理
+        console.error('Error fetching users:', error);
+        cb([]);
+      });
+    },
     exportBatch() {
       let url = this.$baseUrl + '/bill/export'
       if (this.user.role === 'USER') {
@@ -177,7 +221,7 @@ export default {
       })
     },
     del(id) {   // 单个删除
-      this.$confirm('您确定删除吗？', '确认删除', {type: "warning"}).then(response => {
+      this.$confirm('您确定删除吗？', '确认删除', { type: "warning" }).then(response => {
         this.$request.delete('/bill/delete/' + id).then(res => {
           if (res.code === '200') {   // 表示操作成功
             this.$message.success('操作成功')
@@ -197,8 +241,8 @@ export default {
         this.$message.warning('请选择数据')
         return
       }
-      this.$confirm('您确定批量删除这些数据吗？', '确认删除', {type: "warning"}).then(response => {
-        this.$request.delete('/bill/delete/batch', {data: this.ids}).then(res => {
+      this.$confirm('您确定批量删除这些数据吗？', '确认删除', { type: "warning" }).then(response => {
+        this.$request.delete('/bill/delete/batch', { data: this.ids }).then(res => {
           if (res.code === '200') {   // 表示操作成功
             this.$message.success('操作成功')
             this.load(1)
@@ -239,6 +283,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

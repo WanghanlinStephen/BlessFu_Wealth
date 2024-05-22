@@ -271,11 +271,11 @@ export default {
 
         // 计算并更新账户余额
         let calculatedBalance = totalIncome - totalPay;
-        this.ac = {
-          balance: calculatedBalance,
-          pay: totalPay,
-          income: totalIncome
-        };
+        // this.ac = {
+        //   balance: calculatedBalance,
+        //   pay: totalPay,
+        //   income: totalIncome
+        // };
       }).catch((error) => {
         console.error('Error loading data:', error);
       });

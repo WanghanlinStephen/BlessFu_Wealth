@@ -20,6 +20,7 @@
         <el-table-column prop="balance" label="余额"></el-table-column>
         <el-table-column prop="income" label="收入"></el-table-column>
         <el-table-column prop="pay" label="支出"></el-table-column>
+        <el-table-column prop="time" label="时间贡献"></el-table-column>
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
             <el-button size="mini" type="primary" plain @click="handleEdit(scope.row)">编辑</el-button>
@@ -159,6 +160,7 @@ export default {
       }).then(res => {
         this.tableData = res.data?.list
         this.total = res.data?.total
+        console.log(this.tableData);
       })
     },
     reset() {

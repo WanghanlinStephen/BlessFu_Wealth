@@ -1,10 +1,15 @@
 <template>
   <div>
     <div class="search">
-      <el-input placeholder="请输入账号查询" style="width: 200px" v-model="username"></el-input>
+      <el-input placeholder="请输入账号查询" style="width: 200px; margin-right: 10px" v-model="username"></el-input>
+      <el-date-picker value-format="yyyy-MM-dd" format="yyyy-MM-dd" v-model="start" placeholder="请选择生日开始日期查询"
+        style="width: 250px; margin-right: 10px"></el-date-picker>
+      <el-date-picker value-format="yyyy-MM-dd" format="yyyy-MM-dd" v-model="end" placeholder="请选择生日结束日期查询"
+        style="width: 250px;"></el-date-picker>
       <el-button type="info" plain style="margin-left: 10px" @click="load(1)">查询</el-button>
       <el-button type="warning" plain style="margin-left: 10px" @click="reset">重置</el-button>
     </div>
+
 
     <div class="operation">
       <el-button type="primary" plain @click="handleAdd">新增</el-button>
@@ -25,7 +30,7 @@
           <template v-slot="scope">
             <div style="display: flex; align-items: center">
               <el-image style="width: 40px; height: 40px; border-radius: 50%" v-if="scope.row.avatar"
-                        :src="scope.row.avatar" :preview-src-list="[scope.row.avatar]"></el-image>
+                :src="scope.row.avatar" :preview-src-list="[scope.row.avatar]"></el-image>
             </div>
           </template>
         </el-table-column>
@@ -39,14 +44,8 @@
       </el-table>
 
       <div class="pagination">
-        <el-pagination
-            background
-            @current-change="handleCurrentChange"
-            :current-page="pageNum"
-            :page-sizes="[5, 10, 20]"
-            :page-size="pageSize"
-            layout="total, prev, pager, next"
-            :total="total">
+        <el-pagination background @current-change="handleCurrentChange" :current-page="pageNum"
+          :page-sizes="[5, 10, 20]" :page-size="pageSize" layout="total, prev, pager, next" :total="total">
         </el-pagination>
       </div>
     </div>
@@ -73,16 +72,12 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="生日" prop="birth">
-          <el-date-picker placeholder="请选择生日" style="width: 100%" value-format="yyyy-MM-dd" format="yyyy-MM-dd" v-model="form.birth"></el-date-picker>
+          <el-date-picker placeholder="请选择生日" style="width: 100%" value-format="yyyy-MM-dd" format="yyyy-MM-dd"
+            v-model="form.birth"></el-date-picker>
         </el-form-item>
         <el-form-item label="头像">
-          <el-upload
-              class="avatar-uploader"
-              :action="$baseUrl + '/files/upload'"
-              :headers="{ token: user.token }"
-              list-type="picture"
-              :on-success="handleAvatarSuccess"
-          >
+          <el-upload class="avatar-uploader" :action="$baseUrl + '/files/upload'" :headers="{ token: user.token }"
+            list-type="picture" :on-success="handleAvatarSuccess">
             <el-button type="primary">上传头像</el-button>
           </el-upload>
         </el-form-item>
@@ -107,13 +102,15 @@ export default {
       pageNum: 1,   // 当前的页码
       pageSize: 10,  // 每页显示的个数
       total: 0,
+      start: null,
+      end: null,
       username: null,
       fromVisible: false,
       form: {},
       user: JSON.parse(localStorage.getItem('xm-user') || '{}'),
       rules: {
         username: [
-          {required: true, message: '请输入账号', trigger: 'blur'},
+          { required: true, message: '请输入账号', trigger: 'blur' },
         ]
       },
       ids: []
@@ -151,7 +148,7 @@ export default {
       })
     },
     del(id) {   // 单个删除
-      this.$confirm('您确定删除吗？', '确认删除', {type: "warning"}).then(response => {
+      this.$confirm('您确定删除吗？', '确认删除', { type: "warning" }).then(response => {
         this.$request.delete('/user/delete/' + id).then(res => {
           if (res.code === '200') {   // 表示操作成功
             this.$message.success('操作成功')
@@ -171,8 +168,8 @@ export default {
         this.$message.warning('请选择数据')
         return
       }
-      this.$confirm('您确定批量删除这些数据吗？', '确认删除', {type: "warning"}).then(response => {
-        this.$request.delete('/user/delete/batch', {data: this.ids}).then(res => {
+      this.$confirm('您确定批量删除这些数据吗？', '确认删除', { type: "warning" }).then(response => {
+        this.$request.delete('/user/delete/batch', { data: this.ids }).then(res => {
           if (res.code === '200') {   // 表示操作成功
             this.$message.success('操作成功')
             this.load(1)
@@ -190,6 +187,8 @@ export default {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
           username: this.username,
+          start: this.start,
+          end: this.end,
         }
       }).then(res => {
         this.tableData = res.data?.list
@@ -198,6 +197,8 @@ export default {
     },
     reset() {
       this.username = null
+      this.start = null
+      this.end = null
       this.load(1)
     },
     handleCurrentChange(pageNum) {
@@ -211,6 +212,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
