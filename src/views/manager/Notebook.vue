@@ -11,8 +11,8 @@
       <el-button type="danger" plain @click="delBatch">批量删除</el-button>
     </div>
 
-    <div class="table"  v-if="user.role === 'ADMIN' && tableData.length">
-      <el-table :data="tableData" stripe  @selection-change="handleSelectionChange">
+    <div class="table" v-if="user.role === 'ADMIN' && tableData.length">
+      <el-table :data="tableData" stripe @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center"></el-table-column>
         <el-table-column prop="id" label="序号" width="80" align="center" sortable></el-table-column>
         <el-table-column label="封面">
@@ -35,19 +35,19 @@
         <el-table-column label="操作" width="180" align="center">
           <template v-slot="scope">
             <el-button plain type="primary" @click="handleEdit(scope.row)" size="mini">编辑</el-button>
-            <el-button plain type="danger" size="mini" @click=del(scope.row.id)>删除</el-button>
+            <el-button plain type="danger" size="mini" @click="del(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
       <div class="pagination">
         <el-pagination
-            background
-            @current-change="handleCurrentChange"
-            :current-page="pageNum"
-            :page-sizes="[5, 10, 20]"
-            :page-size="pageSize"
-            layout="total, prev, pager, next"
-            :total="total">
+          background
+          @current-change="handleCurrentChange"
+          :current-page="pageNum"
+          :page-sizes="[5, 10, 20]"
+          :page-size="pageSize"
+          layout="total, prev, pager, next"
+          :total="total">
         </el-pagination>
       </div>
     </div>
@@ -77,19 +77,16 @@
 
       <div class="pagination">
         <el-pagination
-            background
-            @current-change="handleCurrentChange"
-            :current-page="pageNum"
-            :page-sizes="[5, 10, 20]"
-            :page-size="pageSize"
-            layout="total, prev, pager, next"
-            :total="total">
+          background
+          @current-change="handleCurrentChange"
+          :current-page="pageNum"
+          :page-sizes="[5, 10, 20]"
+          :page-size="pageSize"
+          layout="total, prev, pager, next"
+          :total="total">
         </el-pagination>
       </div>
     </div>
-
-
-
 
     <el-dialog title="信息" :visible.sync="fromVisible" width="60%" :close-on-click-modal="false" destroy-on-close>
       <el-form label-width="100px" style="padding-right: 50px" :model="form" :rules="rules" ref="formRef">
@@ -98,21 +95,48 @@
         </el-form-item>
         <el-form-item label="封面" prop="cover">
           <el-upload
-              :action="$baseUrl + '/files/upload'"
-              :headers="{ token: user.token }"
-              list-type="picture"
-              :on-success="handleCoverSuccess"
+            :action="$baseUrl + '/files/upload'"
+            :headers="{ token: user.token }"
+            list-type="picture"
+            :on-success="handleCoverSuccess"
           >
             <el-button type="primary">上传封面</el-button>
           </el-upload>
         </el-form-item>
-        <el-form-item prop="content" label="内容">
-          <div id="editor"></div>
+        <el-form-item label="分享类别" prop="shareType">
+          <el-radio-group v-model="form.shareType" @change="handleShareTypeChange">
+            <el-radio :label="1">图片+文字</el-radio>
+            <el-radio :label="2">文字</el-radio>
+            <el-radio :label="3">视频</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item v-if="form.shareType === 1 || form.shareType === 2" prop="content" label="内容">
+          <el-input type="textarea" v-model="form.content" rows="5"></el-input>
+        </el-form-item>
+        <el-form-item v-if="form.shareType === 1" label="图片上传" prop="image">
+          <el-upload
+            :action="$baseUrl + '/files/upload'"
+            :headers="{ token: user.token }"
+            list-type="picture"
+            :on-success="handleImageSuccess"
+          >
+            <el-button type="primary">上传图片</el-button>
+          </el-upload>
+        </el-form-item>
+        <el-form-item v-if="form.shareType === 3" label="视频上传" prop="video">
+          <el-upload
+            :action="$baseUrl + '/files/upload'"
+            :headers="{ token: user.token }"
+            list-type="video"
+            :on-success="handleVideoSuccess"
+          >
+            <el-button type="primary">上传视频</el-button>
+          </el-upload>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="fromVisible = false">取 消</el-button>
-        <el-button type="primary" @click="save">确 定</el-button>
+        <el-button @click="fromVisible = false">取消</el-button>
+        <el-button type="primary" @click="save">确定</el-button>
       </div>
     </el-dialog>
 
@@ -121,11 +145,9 @@
         <div v-html="content"></div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="contentVisible = false">确 定</el-button>
+        <el-button type="primary" @click="contentVisible = false">确定</el-button>
       </div>
     </el-dialog>
-
-
   </div>
 </template>
 
@@ -142,12 +164,29 @@ export default {
       total: 0,
       title: null,
       fromVisible: false,
-      form: {},
+      form: {
+        shareType: 1 // 默认分享类别为图片+文字
+      },
       user: JSON.parse(localStorage.getItem('xm-user') || '{}'),
       rules: {
         title: [
           {required: true, message: '请输入标题', trigger: 'blur'},
         ],
+        cover: [
+          {required: true, message: '请上传封面', trigger: 'change'},
+        ],
+        shareType: [
+          {required: true, message: '请选择分享类别', trigger: 'change'},
+        ],
+        content: [
+          {required: true, message: '请输入内容', trigger: 'blur'},
+        ],
+        image: [
+          {required: true, message: '请上传图片', trigger: 'change'},
+        ],
+        video: [
+          {required: true, message: '请上传视频', trigger: 'change'},
+        ]
       },
       ids: [],
       editor: null,
@@ -164,7 +203,7 @@ export default {
       this.contentVisible = true
     },
     handleAdd() {   // 新增数据
-      this.form = {}  // 新增数据的时候清空数据
+      this.form = { shareType: 1 }  // 新增数据的时候清空数据，并设置默认分享类别
       this.setRichText()  // 创建富文本区域
       this.fromVisible = true   // 打开弹窗
     },
@@ -249,6 +288,12 @@ export default {
     handleCoverSuccess(res) {
       this.form.cover = res.data
     },
+    handleImageSuccess(res) {
+      this.form.image = res.data
+    },
+    handleVideoSuccess(res) {
+      this.form.video = res.data
+    },
     setRichText(content) {
       this.$nextTick(() => {
         this.editor = new E(`#editor`)
@@ -266,10 +311,17 @@ export default {
         }
       })
     },
+    handleShareTypeChange(value) {
+      // 清空相关字段
+      this.form.content = '';
+      this.form.image = '';
+      this.form.video = '';
+      this.setRichText(); // 重新初始化富文本编辑器
+    }
   }
 }
 </script>
 
 <style scoped>
-
+/* 样式根据实际需求调整 */
 </style>

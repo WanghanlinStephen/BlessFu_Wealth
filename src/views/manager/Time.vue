@@ -13,7 +13,7 @@
         <div class="operation">
             <el-button type="primary" plain @click="handleAdd">记一笔</el-button>
             <el-button type="danger" plain @click="delBatch">批量删除</el-button>
-            <el-button type="info" plain @click="exportBatch">全部导出</el-button>
+            <!-- <el-button type="info" plain @click="exportBatch">全部导出</el-button> -->
         </div>
 
         <div class="table">

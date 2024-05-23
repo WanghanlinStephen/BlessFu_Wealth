@@ -9,6 +9,7 @@
     <div class="operation">
       <el-button type="primary" plain @click="handleAdd">新增</el-button>
       <el-button type="danger" plain @click="delBatch">批量删除</el-button>
+      <el-button type="info" plain @click="exportBatch">义工证明导出</el-button>
     </div>
 
     <div class="table">
@@ -30,14 +31,8 @@
       </el-table>
 
       <div class="pagination">
-        <el-pagination
-            background
-            @current-change="handleCurrentChange"
-            :current-page="pageNum"
-            :page-sizes="[5, 10, 20]"
-            :page-size="pageSize"
-            layout="total, prev, pager, next"
-            :total="total">
+        <el-pagination background @current-change="handleCurrentChange" :current-page="pageNum"
+          :page-sizes="[5, 10, 20]" :page-size="pageSize" layout="total, prev, pager, next" :total="total">
         </el-pagination>
       </div>
     </div>
@@ -117,7 +112,7 @@ export default {
       })
     },
     del(id) {   // 单个删除
-      this.$confirm('您确定删除吗？', '确认删除', {type: "warning"}).then(response => {
+      this.$confirm('您确定删除吗？', '确认删除', { type: "warning" }).then(response => {
         this.$request.delete('/ac/delete/' + id).then(res => {
           if (res.code === '200') {   // 表示操作成功
             this.$message.success('操作成功')
@@ -137,8 +132,8 @@ export default {
         this.$message.warning('请选择数据')
         return
       }
-      this.$confirm('您确定批量删除这些数据吗？', '确认删除', {type: "warning"}).then(response => {
-        this.$request.delete('/ac/delete/batch', {data: this.ids}).then(res => {
+      this.$confirm('您确定批量删除这些数据吗？', '确认删除', { type: "warning" }).then(response => {
+        this.$request.delete('/ac/delete/batch', { data: this.ids }).then(res => {
           if (res.code === '200') {   // 表示操作成功
             this.$message.success('操作成功')
             this.load(1)
@@ -148,6 +143,18 @@ export default {
         })
       }).catch(() => {
       })
+    },
+    exportBatch() {
+      let url = this.$baseUrl + '/volunteer/export';
+
+      // 将 this.ids 转换为查询参数
+      if (this.ids && this.ids.length > 0) {
+        let params = this.ids.join(',');
+        url += `?ids=${encodeURIComponent(params)}`;
+      }
+
+      // 打开带有参数的 URL
+      window.open(url);
     },
     load(pageNum) {  // 分页查询
       if (pageNum) this.pageNum = pageNum
@@ -174,6 +181,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
