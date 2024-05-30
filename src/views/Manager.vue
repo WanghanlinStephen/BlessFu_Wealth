@@ -3,7 +3,7 @@
     <!--  头部  -->
     <div class="manager-header">
       <div class="manager-header-left">
-        <img src="@/assets/imgs/logo.png" />
+        <img src="https://blessfuwealth.s3.us-east-2.amazonaws.com/images/heading.ico" />
         <div class="title">Blessfu记账</div>
       </div>
 
@@ -54,7 +54,7 @@
             <!-- <el-menu-item index="/plan">存钱计划</el-menu-item> -->
             <el-menu-item index="/ac" v-if="user.role === 'ADMIN'">账户信息</el-menu-item>
             <el-menu-item index="/category" v-if="user.role === 'ADMIN'">账单分类</el-menu-item>
-            <el-menu-item index="/notice" v-if="user.role === 'ADMIN'">公告信息</el-menu-item>
+            <el-menu-item index="/notice">公告信息</el-menu-item>
             <el-menu-item index="/email" v-if="user.role === 'ADMIN'">邮箱提醒</el-menu-item>
 
           </el-submenu>

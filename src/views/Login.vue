@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div style="width: 350px; padding: 30px; background-color: rgba(255, 255, 255, .9); border-radius: 5px;">
-      <div style="text-align: center; font-size: 24px; margin-bottom: 40px; color: #000">Blessfu记账</div>
+      <div style="text-align: center; font-size: 24px; margin-bottom: 40px; color: #000">Blessfu 登记系统</div>
       <el-form :model="form" :rules="rules" ref="formRef">
         <el-form-item prop="username">
           <el-input prefix-icon="el-icon-user" placeholder="请输入账号" v-model="form.username"></el-input>
@@ -74,7 +74,7 @@ export default {
 .container {
   height: 100vh;
   overflow: hidden;
-  background-image: url("@/assets/imgs/bg.jpg");
+  background-image: url("https://blessfuweb.s3.ca-central-1.amazonaws.com/images/heading/background.jpg");
   background-size: 100%;
   display: flex;
   align-items: center;

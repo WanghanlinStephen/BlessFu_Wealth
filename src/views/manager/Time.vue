@@ -13,7 +13,8 @@
         <div class="operation">
             <el-button type="primary" plain @click="handleAdd">记一笔</el-button>
             <el-button type="danger" plain @click="delBatch">批量删除</el-button>
-            <!-- <el-button type="info" plain @click="exportBatch">全部导出</el-button> -->
+            <el-button type="info" plain @click="importBatch"  v-if="user.role === 'ADMIN'">导入文件</el-button>
+            <el-button type="info" plain @click="exportBatch"  v-if="user.role === 'ADMIN'">导出文件</el-button>
         </div>
 
         <div class="table">
@@ -42,7 +43,7 @@
         <el-dialog title="记录义工时间" :visible.sync="formVisible" width="40%" :close-on-click-modal="false"
             destroy-on-close>
             <el-form :model="form" label-width="100px" style="padding-right: 50px" :rules="rules" ref="formRef">
-                <el-form-item label="选择用户" prop="userName">
+                <el-form-item label="选择用户" prop="userName" v-if="user.role === 'ADMIN'">
                     <el-autocomplete v-model="form.userName" :fetch-suggestions="querySearch" placeholder="请输入用户姓名"
                         style="width: 100%" @select="handleSelect">
                         <template slot-scope="{ item }">
@@ -68,6 +69,18 @@
             <div slot="footer" class="dialog-footer">
                 <el-button @click="formVisible = false">取消</el-button>
                 <el-button type="primary" @click="save">确认</el-button>
+            </div>
+        </el-dialog>
+
+        <el-dialog :visible.sync="importDialogVisible" title="导入文件" width="30%">
+            <el-upload class="upload-demo" drag :auto-upload="false" :before-upload="() => false"
+                :on-change="handleFileChange" accept=".xlsx" :file-list="[]">
+                <i class="el-icon-upload"></i>
+                <div class="el-upload__text">将.xlsx文件拖到此处，或<em>点击上传</em></div>
+            </el-upload>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="importDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="handleImport">确 定</el-button>
             </div>
         </el-dialog>
     </div>
@@ -107,7 +120,9 @@ export default {
                 ]
             },
             ids: [],
-            categoryList: []
+            categoryList: [],
+            importDialogVisible: false,
+            importFile: null
         };
     },
     created() {
@@ -179,6 +194,9 @@ export default {
                 });
             }).catch(() => { });
         },
+        handleSelectionChange(rows) {   // 当前选中的所有的行数据
+            this.ids = rows.map(v => v.id)   //  [1,2]
+        },
         delBatch() {
             if (!this.ids.length) {
                 this.$message.warning('请选择要删除的记录');
@@ -216,13 +234,67 @@ export default {
             this.userName = null;
             this.startDate = null;
             this.endDate = null;
-            this.start = null
-            this.end = null
+            this.start = null;
+            this.end = null;
             this.load(1);
         },
         handleCurrentChange(pageNum) {
             this.load(pageNum);
         },
+        importBatch() {
+            this.importDialogVisible = true;
+        },
+        handleFileChange(file, fileList) {
+            if (file.raw.type !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                this.$message.error("只能上传 .xlsx 文件");
+                return;
+            }
+            this.importFile = file.raw;
+        },
+        handleImport() {
+            if (!this.importFile) {
+                this.$message.error("请先选择一个文件");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.readAsDataURL(this.importFile);
+            reader.onload = () => {
+                const base64 = reader.result.split(',')[1]; // 去掉前面的data URI scheme
+
+                this.$request({
+                    url: '/volunteer/import',
+                    method: 'POST',
+                    data: {
+                        file: base64,
+                        filename: this.importFile.name
+                    }
+                }).then(response => {
+                    if (response.code === '200') {
+                        console.log("导入成功");
+                        this.$message.success("导入成功");
+                        this.load(1);
+                        this.importDialogVisible = false;
+                        this.importFile = null;
+                    } else {
+                        console.log("导入失败");
+                        console.log(response);
+
+                        this.$message.error(response.msg);
+                    }
+                }).catch(error => {
+                    this.$message.error("导入失败");
+                    console.error(error);
+                });
+            };
+        },
+        exportBatch() {
+            let url = this.$baseUrl + '/volunteer/export/excel'
+            if (this.user.role === 'USER') {
+                url += '?userId=' + this.user.id
+            }
+            window.open(url)
+        }
     }
 }
 </script>

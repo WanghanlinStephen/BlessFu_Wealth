@@ -82,7 +82,7 @@ export default {
 .container {
   height: 100vh;
   overflow: hidden;
-  background-image: url("@/assets/imgs/bg1.jpg");
+  background-image: url("https://blessfuweb.s3.ca-central-1.amazonaws.com/images/heading/background.jpg");
   background-size: 100%;
   display: flex;
   align-items: center;

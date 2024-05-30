@@ -73,7 +73,7 @@
       </div>
     </div>
 
-    <div style="display: flex; margin: 10px 0">
+    <!-- <div style="display: flex; margin: 10px 0">
       <div style="width: 50%;" class="card">
         <div style="margin-bottom: 30px; font-size: 20px; font-weight: bold">公告列表</div>
         <div>
@@ -86,7 +86,7 @@
           </el-timeline>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
