@@ -27,14 +27,14 @@
         <el-table-column prop="sex" label="性别"></el-table-column>
         <el-table-column prop="birth" label="生日"></el-table-column>
         <el-table-column prop="refererInfo" label="被邀请人"></el-table-column>
-        <el-table-column label="头像">
+        <!-- <el-table-column label="头像">
           <template v-slot="scope">
             <div style="display: flex; align-items: center">
               <el-image style="width: 40px; height: 40px; border-radius: 50%" v-if="scope.row.avatar"
                 :src="scope.row.avatar" :preview-src-list="[scope.row.avatar]"></el-image>
             </div>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column prop="role" label="角色"></el-table-column>
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
@@ -76,12 +76,12 @@
           <el-date-picker placeholder="请选择生日" style="width: 100%" value-format="yyyy-MM-dd" format="yyyy-MM-dd"
             v-model="form.birth"></el-date-picker>
         </el-form-item>
-        <el-form-item label="头像">
+        <!-- <el-form-item label="头像">
           <el-upload class="avatar-uploader" :action="$baseUrl + '/files/upload'" :headers="{ token: user.token }"
             list-type="picture" :on-success="handleAvatarSuccess">
             <el-button type="primary">上传头像</el-button>
           </el-upload>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
 
       <div slot="footer" class="dialog-footer">

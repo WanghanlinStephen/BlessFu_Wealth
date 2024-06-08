@@ -2,7 +2,7 @@
   <div>
     <el-card style="width: 50%">
       <el-form :model="user" label-width="100px" style="padding-right: 50px">
-        <div style="margin: 15px; text-align: center">
+        <!-- <div style="margin: 15px; text-align: center">
           <el-upload
               class="avatar-uploader"
               :action="$baseUrl + '/files/upload'"
@@ -12,7 +12,7 @@
             <img v-if="user.avatar" :src="user.avatar" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
-        </div>
+        </div> -->
         <el-form-item label="用户名" prop="username">
           <el-input v-model="user.username" placeholder="用户名" disabled></el-input>
         </el-form-item>
@@ -71,10 +71,10 @@ export default {
         }
       })
     },
-    handleAvatarSuccess(response, file, fileList) {
-      // 把user的头像属性换成上传的图片的链接
-      this.$set(this.user, 'avatar', response.data)
-    },
+    // handleAvatarSuccess(response, file, fileList) {
+    //   // 把user的头像属性换成上传的图片的链接
+    //   this.$set(this.user, 'avatar', response.data)
+    // },
   }
 }
 </script>

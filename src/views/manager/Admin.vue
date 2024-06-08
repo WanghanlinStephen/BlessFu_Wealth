@@ -19,14 +19,14 @@
         <el-table-column prop="name" label="姓名"></el-table-column>
         <el-table-column prop="phone" label="电话"></el-table-column>
         <el-table-column prop="email" label="邮箱"></el-table-column>
-        <el-table-column label="头像">
+        <!-- <el-table-column label="头像">
           <template v-slot="scope">
             <div style="display: flex; align-items: center">
               <el-image style="width: 40px; height: 40px; border-radius: 50%" v-if="scope.row.avatar"
                         :src="scope.row.avatar" :preview-src-list="[scope.row.avatar]"></el-image>
             </div>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column prop="role" label="角色"></el-table-column>
         <el-table-column label="操作" align="center" width="180">
           <template v-slot="scope">
@@ -64,7 +64,7 @@
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="form.email" placeholder="邮箱"></el-input>
         </el-form-item>
-        <el-form-item label="头像">
+        <!-- <el-form-item label="头像">
           <el-upload
               class="avatar-uploader"
               :action="$baseUrl + '/files/upload'"
@@ -74,7 +74,7 @@
           >
             <el-button type="primary">上传头像</el-button>
           </el-upload>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
 
       <div slot="footer" class="dialog-footer">
@@ -192,10 +192,10 @@ export default {
     handleCurrentChange(pageNum) {
       this.load(pageNum)
     },
-    handleAvatarSuccess(response, file, fileList) {
-      // 把头像属性换成上传的图片的链接
-      this.form.avatar = response.data
-    },
+    // handleAvatarSuccess(response, file, fileList) {
+    //   // 把头像属性换成上传的图片的链接
+    //   this.form.avatar = response.data
+    // },
   }
 }
 </script>
