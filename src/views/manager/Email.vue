@@ -93,7 +93,7 @@
               content: this.emailForm.content,
               date: this.emailForm.date
             };
-            axios.post('http://localhost:9090/email/send', postData, {
+            axios.post(process.env.VUE_APP_BASEURL+'email/send', postData, {
               headers: {
                 'Content-Type': 'application/json'
               }
