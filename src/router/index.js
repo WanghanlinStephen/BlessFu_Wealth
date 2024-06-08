@@ -28,7 +28,9 @@ const routes = [
       { path: 'category', name: 'Category', meta: { name: '账户信息' }, component: () => import('../views/manager/Category') },
       { path: 'bill', name: 'Bill', meta: { name: '我的账单' }, component: () => import('../views/manager/Bill') },
       { path: 'time', name: 'Time', meta: { name: '时间贡献' }, component: () => import('../views/manager/Time') },
-      { path: 'notebook', name: 'Notebook', meta: { name: '念经打卡' }, component: () => import('../views/manager/Notebook') },
+      // { path: 'notebook', name: 'Notebook', meta: { name: '念经打卡' }, component: () => import('../views/manager/Notebook') },
+      { path: 'registerScripture', name: 'RegisterScripture', meta: { name: '打卡经文' }, component: () => import('../views/manager/RegisterScripture') },
+      { path: 'scripture', name: 'Scripture', meta: { name: '经文分类' }, component: () => import('../views/manager/Scripture') },
       // { path: 'plan', name: 'Plan', meta: { name: '存钱计划' }, component: () => import('../views/manager/Plan') },
       { path: 'planDetail', name: 'PlanDetail', meta: { name: '存钱计划明细' }, component: () => import('../views/manager/PlanDetail') },
     ]

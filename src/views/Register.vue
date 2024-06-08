@@ -12,6 +12,9 @@
         <el-form-item prop="confirmPass">
           <el-input prefix-icon="el-icon-lock" placeholder="请确认密码" show-password  v-model="form.confirmPass"></el-input>
         </el-form-item>
+        <el-form-item prop="refererInfo">
+          <el-input prefix-icon="el-icon-user" placeholder="请输入邀请人信息"  v-model="form.refererInfo"></el-input>
+        </el-form-item>
         <el-form-item>
           <el-button style="width: 100%; background-color: #009788; border-color: #009788; color: white" @click="register">注 册</el-button>
         </el-form-item>
@@ -51,6 +54,9 @@ export default {
         ],
         confirmPass: [
           { validator: validatePassword, trigger: 'blur' }
+        ],
+        refererInfo: [
+          { required: true, message: '请输入邀请人信息', trigger: 'blur' }
         ]
       }
     }

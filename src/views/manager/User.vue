@@ -26,6 +26,7 @@
         <el-table-column prop="email" label="邮箱"></el-table-column>
         <el-table-column prop="sex" label="性别"></el-table-column>
         <el-table-column prop="birth" label="生日"></el-table-column>
+        <el-table-column prop="refererInfo" label="被邀请人"></el-table-column>
         <el-table-column label="头像">
           <template v-slot="scope">
             <div style="display: flex; align-items: center">

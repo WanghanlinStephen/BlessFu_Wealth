@@ -50,7 +50,9 @@
             <el-menu-item index="/time" v-else>时间贡献</el-menu-item>
 
            
-            <el-menu-item index="/notebook">念经打卡</el-menu-item>
+            <!-- <el-menu-item index="/notebook">念经打卡</el-menu-item> -->
+            <el-menu-item index="/registerScripture">念经打卡</el-menu-item>
+            <el-menu-item index="/scripture" v-if="user.role === 'ADMIN'">经文分类</el-menu-item>
             <!-- <el-menu-item index="/plan">存钱计划</el-menu-item> -->
             <el-menu-item index="/ac" v-if="user.role === 'ADMIN'">账户信息</el-menu-item>
             <el-menu-item index="/category" v-if="user.role === 'ADMIN'">账单分类</el-menu-item>
