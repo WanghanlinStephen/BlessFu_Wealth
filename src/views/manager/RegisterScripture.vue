@@ -2,6 +2,7 @@
   <div>
     <div class="search">
       <el-input placeholder="请选择经书类型查询" style="width: 200px; margin-right: 10px" v-model="category"></el-input>
+      <el-input placeholder="请输入用户姓名查询" style="width: 200px; margin-right: 10px" v-model="userName"></el-input>
       <el-date-picker value-format="yyyy-MM-dd" format="yyyy-MM-dd" v-model="start" placeholder="请选择开始日期查询" style="width: 200px; margin-right: 10px"></el-date-picker>
       <el-date-picker value-format="yyyy-MM-dd" format="yyyy-MM-dd" v-model="end" placeholder="请选择结束日期查询" style="width: 200px;"></el-date-picker>
       <el-button type="info" plain style="margin-left: 10px" @click="load(1)">查询</el-button>
@@ -98,6 +99,7 @@ export default {
       pageSize: 10,
       total: 0,
       category: null,
+      userName: null,
       start: null,
       end: null,
       fromVisible: false,
@@ -254,6 +256,7 @@ export default {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
           category: this.category,
+          userName: this.userName,
           start: this.start,
           end: this.end,
         }
@@ -267,6 +270,7 @@ export default {
       this.$request.get('/registerScripture/selectAll', {
         params: {
           category: this.category,
+          userName: this.userName,
           start: this.start,
           end: this.end,
         }
@@ -286,6 +290,7 @@ export default {
     },
     reset() {
       this.category = null;
+      this.userName = null;
       this.start = null;
       this.end = null;
       this.load(1);
